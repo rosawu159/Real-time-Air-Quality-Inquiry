@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
+
 import json
-import urllib2
+from urllib.request import urlopen
 import sys
 
 def ranking(temp,r1,r2,r3,r4,r5,r6):
@@ -32,9 +33,9 @@ def ranking(temp,r1,r2,r3,r4,r5,r6):
     print("0     25   50   75   100   125   150")
 
     
-rsp=urllib2.urlopen('https://opendata.epa.gov.tw/webapi/api/rest/datastore/355000000I-000259/?format=csv&token={TOKEN}')
+rsp=urlopen('https://opendata.epa.gov.tw/webapi/api/rest/datastore/355000000I-000259/?format=csv&token=qm0+Vkjb6UOUg+XetUmKNg')
 data=rsp.read()
-csvdata=str(data).decode('utf8')
+csvdata=data.decode('utf-8')
 csv=[]
 csv=csvdata.splitlines()
 i=0
@@ -44,12 +45,11 @@ for line in csv:
         item=line.split(",")
         Sitename=item[0].strip('"')
         Country=item[1].strip('"')
-        PSI=item[2].strip('"')
+        AQI=item[2].strip('"')
         MajorPollutant=item[3].strip('"')
         Status=item[4].strip('"')
-        dict1[Sitename]=[PSI,Sitename,Country,MajorPollutant,Status]
+        dict1[Sitename]=[AQI,Sitename,Country,MajorPollutant,Status]
     i+=1    
-        
 dict1=sorted(dict1.values(),reverse=True)
 r1,r2,r3,r4,r5,r6=' '*5,' '*5,' '*5,' '*5,' '*5,' '*5
 
@@ -62,21 +62,21 @@ while x==0:
             if dict1[w-1][0]=="":
                 break;
             temp=dict1[w-1][0]
-            temp=int(temp)
-            print json.dumps(dict1[w-1][0:4], encoding="UTF-8", ensure_ascii=False).strip('"')
-            ranking(temp,r1,r2,r3,r4,r5,r6)
-            print("\n")
+            tempAQI=int(temp)
+            print (json.dumps(dict1[w-1][0:4], ensure_ascii=False).strip('"'))
+            ranking(tempAQI,r1,r2,r3,r4,r5,r6)
+        print("\n")
             
     if(int(a)==2):
-        b=raw_input("輸入調查區域:").decode(sys.stdin.encoding)
+        b=input("輸入調查區域:")
         for w in range(1,i):
             c=dict1[w-1][1]
             if b==c:
-                print ('空氣品質指標AQI｜'),json.dumps(dict1[w-1][0], encoding="UTF-8", ensure_ascii=False).strip('"')
-                print ('區域｜'),json.dumps(dict1[w-1][1], encoding="UTF-8", ensure_ascii=False).strip('"')
-                print ('城市｜'),json.dumps(dict1[w-1][2], encoding="UTF-8", ensure_ascii=False).strip('"')
-                print ('氣體｜'),json.dumps(dict1[w-1][3], encoding="UTF-8", ensure_ascii=False).strip('"')
-                print ('狀態｜'),json.dumps(dict1[w-1][4], encoding="UTF-8", ensure_ascii=False).strip('"')
+                print ('空氣品質指標AQI｜'),json.dumps(dict1[w-1][0], ensure_ascii=False).strip('"')
+                print ('區域｜'),json.dumps(dict1[w-1][1], ensure_ascii=False).strip('"')
+                print ('城市｜'),json.dumps(dict1[w-1][2], ensure_ascii=False).strip('"')
+                print ('氣體｜'),json.dumps(dict1[w-1][3], ensure_ascii=False).strip('"')
+                print ('狀態｜'),json.dumps(dict1[w-1][4], ensure_ascii=False).strip('"')
                 
     b=input("\n謝謝你的使用\n\n若要結束請按0\n若要繼續請按1\n")
     if(int(b)==0):
@@ -85,5 +85,3 @@ while x==0:
     if(int(b)==1):
         x=0
         print("\n")        
-
-    
